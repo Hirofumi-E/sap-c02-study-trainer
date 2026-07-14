@@ -12,11 +12,13 @@ sap-c02-study-trainer/
 ├── style.css
 ├── app.js
 ├── questions.js
+├── additional-questions.js
 └── README.md
 ```
 
 ## 機能
 
+- 現在の問題数: 148問
 - 分野別演習
 - 10問 / 20問 / 30問 / 全問の出題
 - 問題順のランダム化
@@ -30,7 +32,9 @@ sap-c02-study-trainer/
 
 ## 問題追加
 
-問題は `questions.js` の `QUESTION_BANK` に追加します。
+基本問題は `questions.js` の `QUESTION_BANK`、追加問題は `additional-questions.js` に入れています。
+
+今後さらに増やす場合は、`additional-questions.js` に追加するのがおすすめです。
 
 ```js
 {

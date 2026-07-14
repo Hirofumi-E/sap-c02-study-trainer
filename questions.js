@@ -221,5 +221,266 @@ const QUESTION_BANK = [
     ],
     answer: ['A'],
     explanation: 'オンプレミスファイル共有からAWSストレージサービスへの効率的なデータ転送にはDataSyncが適しています。差分同期や検証に対応します。DMSはデータベース移行向けです。'
+  },
+  {
+    id: 'd1-004',
+    domain: 'domain1',
+    tags: ['S3', 'Access Point', 'VPC Endpoint'],
+    type: 'multiple',
+    select: 2,
+    question: 'ある企業は中央データアカウントのS3バケットに、複数アカウント・複数VPC上のマイクロサービスからアクセスしています。各サービスには必要なプレフィックスだけを許可し、S3への通信はパブリックインターネットを経由させたくありません。サービスごとの権限分離をしながら、ネットワーク経路も制御する必要があります。適切な対応を2つ選んでください。',
+    choices: [
+      { id: 'A', text: '中央データアカウントでマイクロサービスごとのS3 Access Pointを作成し、各アクセスポイントに最小権限のポリシーを設定する。' },
+      { id: 'B', text: '各マイクロサービスが稼働するVPCにS3 Gateway VPC Endpointを作成し、ルートテーブルへ関連付ける。' },
+      { id: 'C', text: 'すべてのサービスに同一のバケットポリシーでバケット全体への読み書きを許可し、アプリケーション側でアクセス先を制御する。' },
+      { id: 'D', text: '中央データアカウントのVPCにS3 Gateway VPC Endpointを1つ作成し、Transit Gateway経由で全VPCから共有する。' },
+      { id: 'E', text: 'S3バケットをパブリック公開し、CloudFrontの地理制限でアクセス元を制限する。' }
+    ],
+    answer: ['A', 'B'],
+    explanation: 'サービスごとの最小権限にはS3 Access Pointが有効です。S3 Gateway VPC Endpointは各VPCに作成し、S3への通信をAWSネットワーク内に閉じられます。Gateway EndpointはTransit Gateway経由で別VPCから共有するものではありません。'
+  },
+  {
+    id: 'd1-005',
+    domain: 'domain1',
+    tags: ['IAM', 'Permission Boundary', 'Delegation'],
+    type: 'single',
+    select: 1,
+    question: 'プラットフォームチームは各開発チームにIAMロール作成を委任したい一方で、開発チームが管理者権限を持つロールや、監査対象外の権限を持つロールを作成することは防ぎたいと考えています。開発チームは自分たちのアプリケーションに必要な範囲でロールを作成できる必要があります。最小の運用負荷で権限の上限を強制する方法はどれですか。',
+    choices: [
+      { id: 'A', text: '開発チームにIAMロール作成権限を付与し、作成されるロールには必ずPermission Boundaryを設定させるポリシーを適用する。' },
+      { id: 'B', text: '開発チーム全員にAdministratorAccessを付与し、月次監査で過剰権限を削除する。' },
+      { id: 'C', text: 'IAMユーザーをチームごとに共有し、アクセスキーをSecrets Managerに保存して利用させる。' },
+      { id: 'D', text: '各ロール作成依頼をチケット化し、中央チームがすべて手動で作成する。' }
+    ],
+    answer: ['A'],
+    explanation: 'Permission Boundaryは、IAMエンティティに付与できる権限の上限を定義する仕組みです。委任管理をしつつ権限の上限を強制できます。月次監査は予防ではなく事後対応で、共有IAMユーザーは監査性とセキュリティの面で不適切です。'
+  },
+  {
+    id: 'd1-006',
+    domain: 'domain1',
+    tags: ['Route 53 Resolver', 'Hybrid DNS'],
+    type: 'multiple',
+    select: 2,
+    question: '企業はオンプレミスとAWSをDirect Connectで接続しています。オンプレミスの社内ドメインは既存DNSで管理され、AWS側のプライベートホスト名はRoute 53 Private Hosted Zoneで管理されています。オンプレミスからAWS内の名前解決を行い、AWSからオンプレミスの社内ドメインも名前解決したいです。ハイブリッドDNSを構成するために必要な対応を2つ選んでください。',
+    choices: [
+      { id: 'A', text: 'Route 53 Resolver inbound endpointを作成し、オンプレミスDNSからAWS側の名前解決問い合わせを転送する。' },
+      { id: 'B', text: 'Route 53 Resolver outbound endpointとResolver ruleを作成し、社内ドメインの問い合わせをオンプレミスDNSへ転送する。' },
+      { id: 'C', text: 'AWS側の全EC2にパブリックIPを付与し、オンプレミスDNSにパブリックDNS名を登録する。' },
+      { id: 'D', text: 'Private Hosted ZoneをパブリックHosted Zoneへ変更し、インターネット経由で名前解決させる。' },
+      { id: 'E', text: 'CloudFront FunctionsでDNS問い合わせを書き換え、オンプレミスDNSへ転送する。' }
+    ],
+    answer: ['A', 'B'],
+    explanation: 'オンプレミスからAWS側へ問い合わせを受けるにはinbound endpoint、AWSからオンプレミス側へ転送するにはoutbound endpointとResolver ruleを使います。Private Hosted Zoneをパブリック化する必要はありません。'
+  },
+  {
+    id: 'd1-007',
+    domain: 'domain1',
+    tags: ['Backup', 'Organizations', 'Cross-Account'],
+    type: 'single',
+    select: 1,
+    question: '複数アカウントに分散したRDS、EFS、EBSのバックアップを標準化したいです。セキュリティチームは、アプリケーションアカウントの管理者がバックアップを削除できないよう、別の保管先アカウントへバックアップを集約したいと考えています。新規アカウントにも同じポリシーを適用し、運用負荷を抑えるにはどの構成が最も適切ですか。',
+    choices: [
+      { id: 'A', text: 'AWS BackupのOrganizations連携を有効化し、バックアップポリシーをOUへ適用し、クロスアカウントバックアップコピーを設定する。' },
+      { id: 'B', text: '各アカウントで個別にcronを設定し、スナップショットを取得したあと手動で別アカウントへコピーする。' },
+      { id: 'C', text: 'RDS、EFS、EBSごとに別々のLambda関数を作り、各サービスAPIを定期実行する。' },
+      { id: 'D', text: '全アプリケーションを単一アカウントへ統合し、アカウント内でバックアップ権限だけを分離する。' }
+    ],
+    answer: ['A'],
+    explanation: 'AWS Backupは複数サービスのバックアップを一元管理できます。Organizations連携とバックアップポリシーを使うことで、OU単位で標準化できます。クロスアカウントコピーにより、アプリケーションアカウントから分離した保管も可能です。'
+  },
+  {
+    id: 'd2-004',
+    domain: 'domain2',
+    tags: ['EventBridge', 'Step Functions', 'Serverless'],
+    type: 'single',
+    select: 1,
+    question: '保険会社は申込受付後に、本人確認、信用情報照会、契約条件判定、通知送信という複数ステップの処理を行います。一部の外部APIは失敗することがあり、再試行とタイムアウト制御が必要です。処理状態を追跡でき、コード内に複雑な状態管理を持たせず、サーバーレスで実装したい場合、最も適切な構成はどれですか。',
+    choices: [
+      { id: 'A', text: 'EventBridgeで申込イベントを受け取り、Step Functionsで各処理をLambdaや外部API呼び出しとしてオーケストレーションする。' },
+      { id: 'B', text: '1つのLambda関数にすべての処理を直列実装し、失敗時は関数内のwhileループで無制限に再試行する。' },
+      { id: 'C', text: 'EC2上のcronで1分ごとに申込テーブルをポーリングし、処理状態をローカルファイルに保存する。' },
+      { id: 'D', text: 'CloudFront Functionsで申込処理を実行し、外部API呼び出しもエッジで完結させる。' }
+    ],
+    answer: ['A'],
+    explanation: 'Step Functionsは複数ステップのワークフロー、再試行、分岐、タイムアウト、状態追跡に適しています。EventBridgeでイベント駆動にすると疎結合になります。1つのLambdaに状態管理を詰め込むと保守性が下がります。'
+  },
+  {
+    id: 'd2-005',
+    domain: 'domain2',
+    tags: ['DynamoDB', 'Global Tables', 'Latency'],
+    type: 'single',
+    select: 1,
+    question: 'グローバル展開するモバイルゲームでは、ユーザープロファイルとセッション状態を低レイテンシで読み書きする必要があります。ユーザーは北米、欧州、アジアに分散しており、リージョン障害時にも別リージョンで継続利用できることが求められます。アプリケーションはKey-Valueアクセスが中心です。最も適切なデータストア構成はどれですか。',
+    choices: [
+      { id: 'A', text: 'DynamoDB Global Tablesを使用し、複数リージョンでアクティブに読み書きできるようにする。' },
+      { id: 'B', text: '単一リージョンのRDS MySQLをMulti-AZ構成にし、全世界のユーザーを同じエンドポイントへ接続する。' },
+      { id: 'C', text: 'S3にJSONファイルとしてプロファイルを保存し、更新時はオブジェクト全体を上書きする。' },
+      { id: 'D', text: 'ElastiCacheだけに永続データを保存し、バックアップは取得しない。' }
+    ],
+    answer: ['A'],
+    explanation: 'Key-Value中心でグローバル低レイテンシ、複数リージョンの継続利用が必要ならDynamoDB Global Tablesが適しています。RDS Multi-AZは同一リージョン内の高可用性であり、世界中の低レイテンシやリージョン障害対策には不足します。'
+  },
+  {
+    id: 'd2-006',
+    domain: 'domain2',
+    tags: ['ECS', 'Fargate', 'Secrets Manager'],
+    type: 'multiple',
+    select: 2,
+    question: '新規のコンテナベースAPIをECSで構築します。チームはEC2ホストのパッチ適用や容量管理を避けたいと考えています。また、データベース接続情報などの機密情報をコンテナイメージや環境変数の平文に埋め込まない方針です。運用負荷とセキュリティ要件を満たす対応を2つ選んでください。',
+    choices: [
+      { id: 'A', text: 'ECS on Fargateを使用し、タスク定義でコンテナを実行する。' },
+      { id: 'B', text: 'AWS Secrets Managerに機密情報を保存し、タスクロールで必要なシークレットだけ参照させる。' },
+      { id: 'C', text: 'ECS on EC2を使い、全コンテナにホストの管理者権限を付与する。' },
+      { id: 'D', text: 'DockerfileにデータベースパスワードをARGとして埋め込み、ビルド時に固定する。' },
+      { id: 'E', text: 'すべてのタスクに同じIAMユーザーのアクセスキーを環境変数として設定する。' }
+    ],
+    answer: ['A', 'B'],
+    explanation: 'Fargateはサーバー管理を減らしてコンテナを実行できます。Secrets Managerとタスクロールを組み合わせることで、必要なタスクだけが機密情報を取得できます。イメージや環境変数に平文で埋め込むのは避けます。'
+  },
+  {
+    id: 'd2-007',
+    domain: 'domain2',
+    tags: ['Kinesis', 'Analytics', 'S3'],
+    type: 'single',
+    select: 1,
+    question: '広告配信基盤では、クリックイベントを秒間数十万件取り込み、ほぼリアルタイムで不正クリックの検知を行い、同時に生データをS3へ保存して後続分析に使いたいです。イベント順序はシャード単位で保てればよく、コンシューマーを複数持つ予定です。最も適切な取り込み基盤はどれですか。',
+    choices: [
+      { id: 'A', text: 'Kinesis Data Streamsでイベントを取り込み、リアルタイム処理コンシューマーとS3保存処理を分ける。' },
+      { id: 'B', text: 'S3へ直接PUTし、S3イベント通知だけでリアルタイム検知を行う。' },
+      { id: 'C', text: 'RDSに全クリックイベントを同期INSERTし、トリガーで検知処理を実行する。' },
+      { id: 'D', text: 'CloudTrail Lakeへクリックイベントを送信し、管理イベントとして分析する。' }
+    ],
+    answer: ['A'],
+    explanation: '高スループットのストリーミングデータを複数コンシューマーで処理するにはKinesis Data Streamsが適しています。S3イベント通知はオブジェクト作成後のイベントであり、秒間大量イベントのリアルタイム処理基盤としては弱くなります。'
+  },
+  {
+    id: 'd3-004',
+    domain: 'domain3',
+    tags: ['RDS', 'Performance', 'Read Replica'],
+    type: 'single',
+    select: 1,
+    question: '既存のRDS MySQLを使うレポート機能で、日中に重い集計クエリが実行されると本番アプリケーションの書き込み遅延が増えます。アプリケーションの書き込み先は変えず、レポート系の読み取り負荷を分離したいです。最小変更で改善する方法はどれですか。',
+    choices: [
+      { id: 'A', text: 'RDSリードレプリカを作成し、レポート機能の読み取りクエリをリードレプリカへ向ける。' },
+      { id: 'B', text: '本番DBのMulti-AZスタンバイへ読み取りクエリを流す。' },
+      { id: 'C', text: '本番DBのストレージタイプだけを変更し、すべてのクエリを同じプライマリで処理する。' },
+      { id: 'D', text: '毎回本番DBのスナップショットを復元し、復元完了後にレポートを実行する。' }
+    ],
+    answer: ['A'],
+    explanation: '読み取り負荷の分離にはリードレプリカが適しています。Multi-AZのスタンバイは通常読み取りに使うものではありません。スナップショット復元は即時性と運用負荷の面で不利です。'
+  },
+  {
+    id: 'd3-005',
+    domain: 'domain3',
+    tags: ['S3', 'Lifecycle', 'Cost'],
+    type: 'multiple',
+    select: 2,
+    question: '分析用ログがS3に保存されています。直近30日は頻繁に参照されますが、90日を過ぎるとほとんど参照されません。ただし監査要件により7年間保持が必要です。運用負荷を増やさず、長期保管コストを下げたい場合、適切な対応を2つ選んでください。',
+    choices: [
+      { id: 'A', text: 'S3 Lifecycleルールで、一定期間後に低頻度アクセスやGlacier系ストレージクラスへ移行する。' },
+      { id: 'B', text: '保持期限を満たすため、7年後に削除するLifecycleルールを設定する。' },
+      { id: 'C', text: 'すべてのログをS3 Standardに固定し、監査完了まで一切移行しない。' },
+      { id: 'D', text: '参照頻度に関係なく毎日手動でオブジェクトを別バケットへコピーする。' },
+      { id: 'E', text: 'S3バケットを削除し、CloudWatch Logsだけに保存する。' }
+    ],
+    answer: ['A', 'B'],
+    explanation: 'S3 Lifecycleはオブジェクトのストレージクラス移行や期限切れ削除を自動化できます。アクセス頻度が下がるログは低コストなストレージクラスへ移行し、7年保持後に削除することで要件とコスト最適化を両立できます。'
+  },
+  {
+    id: 'd3-006',
+    domain: 'domain3',
+    tags: ['Config', 'Security Hub', 'Remediation'],
+    type: 'single',
+    select: 1,
+    question: 'セキュリティチームは、複数アカウントでS3バケットのパブリック公開やセキュリティグループの過剰開放を継続的に検出したいです。違反を一覧化し、可能なものは自動修復し、監査レポートにも使いたいと考えています。最も適切な組み合わせはどれですか。',
+    choices: [
+      { id: 'A', text: 'AWS Configでリソース設定を評価し、Security Hubに集約し、SSM Automationなどで修復アクションを実行する。' },
+      { id: 'B', text: 'CloudTrailのログを月1回手動確認し、違反があれば各チームへメールする。' },
+      { id: 'C', text: 'Trusted Advisorだけを使い、全リージョン全リソースの設定変更履歴を保持する。' },
+      { id: 'D', text: 'Cost ExplorerでセキュリティグループとS3バケットの公開状態を確認する。' }
+    ],
+    answer: ['A'],
+    explanation: 'AWS Configはリソース設定の継続評価に使います。Security Hubは検出結果の集約と優先度付けに適しています。SSM Automationなどを組み合わせると自動修復もできます。CloudTrailはAPI監査であり、設定準拠の継続評価そのものはConfigが適しています。'
+  },
+  {
+    id: 'd3-007',
+    domain: 'domain3',
+    tags: ['Well-Architected', 'Reliability', 'RTO'],
+    type: 'single',
+    select: 1,
+    question: 'ある業務システムは単一リージョンの複数AZで稼働しており、通常のAZ障害には耐えられます。しかし経営層から、リージョン障害時にも4時間以内に主要機能を再開する要件が追加されました。常時アクティブな別リージョン運用はコスト上難しいです。RTO要件を満たしつつコストを抑えるDR戦略として最も近いものはどれですか。',
+    choices: [
+      { id: 'A', text: 'ウォームスタンバイ構成を別リージョンに用意し、最小構成で常時稼働させ、障害時にスケールアウトする。' },
+      { id: 'B', text: 'バックアップを同一リージョンにだけ保存し、リージョン障害時は復旧を諦める。' },
+      { id: 'C', text: 'マルチサイトアクティブ/アクティブを必ず採用し、全リージョンで常時同じ容量を稼働させる。' },
+      { id: 'D', text: 'DR計画は作らず、障害発生後に手順を検討する。' }
+    ],
+    answer: ['A'],
+    explanation: 'RTO 4時間でコストも抑えたい場合、ウォームスタンバイは現実的な選択肢です。パイロットライトより復旧は速く、アクティブ/アクティブよりコストを抑えられます。RTOはRecovery Time Objective、つまり復旧時間目標です。'
+  },
+  {
+    id: 'd4-004',
+    domain: 'domain4',
+    tags: ['Migration Hub', 'Discovery'],
+    type: 'single',
+    select: 1,
+    question: '大規模移行プロジェクトの初期段階で、オンプレミスの数百台のサーバーについてCPU、メモリ、ネットワーク依存関係、稼働状況を把握したいです。アプリケーション単位で移行計画を作成し、移行状況も一元的に追跡したい場合、最初に使うべきサービスの組み合わせとして最も適切なのはどれですか。',
+    choices: [
+      { id: 'A', text: 'AWS Application Discovery Serviceで情報収集し、AWS Migration Hubでアプリケーション単位の移行状況を追跡する。' },
+      { id: 'B', text: 'AWS Backupでオンプレミスサーバーをバックアップし、Migration HubでCPU使用率を自動推定する。' },
+      { id: 'C', text: 'CloudTrailをオンプレミスにインストールし、サーバー依存関係をAPIイベントから分析する。' },
+      { id: 'D', text: 'Cost Explorerでオンプレミスサーバーの稼働状況を分析し、移行優先度を決める。' }
+    ],
+    answer: ['A'],
+    explanation: 'Application Discovery Serviceはオンプレミス環境のサーバー情報や依存関係の収集に使えます。Migration Hubは複数移行ツールの進捗をアプリケーション単位で追跡できます。'
+  },
+  {
+    id: 'd4-005',
+    domain: 'domain4',
+    tags: ['Snowball', 'Data Transfer'],
+    type: 'single',
+    select: 1,
+    question: '映像制作会社はオンプレミスにある1PB近いアーカイブデータをS3へ移行したいです。インターネット回線は細く、専用線の増強には時間がかかります。移行対象データは大容量ですが、移行中に頻繁な更新はありません。ネットワーク転送に依存せず、現実的な期間で初期移行を完了したい場合、最も適切な方法はどれですか。',
+    choices: [
+      { id: 'A', text: 'AWS Snowball Edgeを複数台使用してデータを物理転送し、AWS側でS3へインポートする。' },
+      { id: 'B', text: '家庭用インターネット回線でS3へ直接アップロードし、失敗したファイルだけ手動で再送する。' },
+      { id: 'C', text: 'DMSを使用して動画ファイルをテーブルとしてS3へ移行する。' },
+      { id: 'D', text: 'CloudFrontをオンプレミスNASの前段に配置し、キャッシュされたファイルだけS3へ移す。' }
+    ],
+    answer: ['A'],
+    explanation: 'PB級データをネットワーク帯域に依存せず移行する場合、Snow Familyが適しています。Snowball Edgeを使うと物理デバイスで大容量データをAWSへ搬送できます。DMSはデータベース移行向けです。'
+  },
+  {
+    id: 'd4-006',
+    domain: 'domain4',
+    tags: ['Container Migration', 'ECR', 'ECS'],
+    type: 'multiple',
+    select: 2,
+    question: 'オンプレミスで稼働している複数のDockerベースWebサービスをAWSへ移行します。アプリケーションコードの大幅変更は避けたいですが、ホストOSの運用負荷は下げたいです。コンテナイメージはAWS内で管理し、デプロイを標準化したいと考えています。適切な対応を2つ選んでください。',
+    choices: [
+      { id: 'A', text: 'コンテナイメージをAmazon ECRへ保存する。' },
+      { id: 'B', text: 'Amazon ECS on Fargateへサービスをデプロイする。' },
+      { id: 'C', text: '各コンテナをAMIに変換し、EC2インスタンスへ個別にインストールする。' },
+      { id: 'D', text: 'EBSスナップショットにDockerイメージを保存し、各ホストで手動ロードする。' },
+      { id: 'E', text: 'コンテナをLambdaレイヤーとして登録し、既存Webサービスをそのまま常時起動する。' }
+    ],
+    answer: ['A', 'B'],
+    explanation: 'ECRはコンテナイメージのマネージドレジストリです。Fargateを使うとホストOS管理を避けてECSサービスを実行できます。AMI化や手動ロードはコンテナ運用の標準化から外れます。'
+  },
+  {
+    id: 'd4-007',
+    domain: 'domain4',
+    tags: ['VMware', 'Migration', 'Hybrid'],
+    type: 'single',
+    select: 1,
+    question: '企業はオンプレミスVMware環境で稼働する業務システムをAWSへ段階移行したいです。短期的にはVMware運用モデルを大きく変えずに移行し、既存のVMware管理ツールや運用スキルを活かしたいという制約があります。アプリケーション改修は次フェーズで行う予定です。最も適切な移行先はどれですか。',
+    choices: [
+      { id: 'A', text: 'VMware Cloud on AWSを使用し、既存VMwareワークロードをAWS上のSDDCへ移行する。' },
+      { id: 'B', text: 'すべてのVMを即座にLambdaへ変換し、イベント駆動へ全面刷新する。' },
+      { id: 'C', text: 'オンプレミスVMwareのVMDKをS3に置き、S3から直接起動する。' },
+      { id: 'D', text: '既存VMware環境を廃止し、全アプリケーションをDynamoDBだけで再構築する。' }
+    ],
+    answer: ['A'],
+    explanation: 'VMware運用モデルを維持しながらAWSへ移行する選択肢としてVMware Cloud on AWSがあります。リファクタリングやサーバーレス化は将来的には有効でも、短期的に既存運用を維持したい要件には合いません。'
   }
 ];

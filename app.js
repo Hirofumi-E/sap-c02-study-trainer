@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'sapC02StudyTrainer.v1';
+const CHOICE_LABELS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -70,6 +71,11 @@ function isCorrect(question, selected) {
   const expected = [...question.answer].sort().join(',');
   const actual = [...selected].sort().join(',');
   return expected === actual;
+}
+
+function displayLabelFor(item, choiceId) {
+  const index = item.choices.indexOf(choiceId);
+  return CHOICE_LABELS[index] || choiceId;
 }
 
 function filterQuestions({ domains, status, hideAnswered }) {
@@ -191,8 +197,9 @@ function renderQuiz() {
   $('#checkButton').textContent = record.checked ? 'チェック済み' : 'チェック';
   $('#checkButton').classList.toggle('danger', record.checked);
 
-  $('#choiceList').innerHTML = item.choices.map((choiceId) => {
+  $('#choiceList').innerHTML = item.choices.map((choiceId, index) => {
     const choice = question.choices.find((entry) => entry.id === choiceId);
+    const displayLabel = CHOICE_LABELS[index] || choice.id;
     const inputType = question.select === 1 ? 'radio' : 'checkbox';
     const selected = item.selected.includes(choice.id) ? 'checked' : '';
     const correctClass = item.answered && question.answer.includes(choice.id) ? ' correct-choice' : '';
@@ -200,7 +207,7 @@ function renderQuiz() {
     return `
       <label class="choice${correctClass}${wrongClass}">
         <input type="${inputType}" name="answerChoice" value="${choice.id}" ${selected} ${item.answered ? 'disabled' : ''}>
-        <span><strong>${choice.id}.</strong> ${choice.text}</span>
+        <span><strong>${displayLabel}.</strong> ${choice.text}</span>
       </label>
     `;
   }).join('');
@@ -211,8 +218,8 @@ function renderQuiz() {
     $('#resultBox').className = `result-box ${item.correct ? 'correct' : 'incorrect'}`;
     $('#resultBox').innerHTML = `
       <strong>${item.correct ? '正解' : '不正解'}</strong><br>
-      あなたの回答: ${item.selected.length ? item.selected.join(', ') : '未回答'}<br>
-      正解: ${question.answer.join(', ')}<br><br>
+      あなたの回答: ${item.selected.length ? item.selected.map((choiceId) => displayLabelFor(item, choiceId)).join(', ') : '未回答'}<br>
+      正解: ${question.answer.map((choiceId) => displayLabelFor(item, choiceId)).join(', ')}<br><br>
       ${question.explanation}
     `;
   }
